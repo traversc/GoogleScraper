@@ -11,7 +11,7 @@ target_directory = 'images/'
 # See in the config.cfg file for possible values
 config = {
     'keyword': 'beautiful landscape', # :D hehe have fun my dear friends
-    'search_engines': ['yandex', 'google', 'bing', 'yahoo'], # duckduckgo not supported
+    'search_engines': ['yandex', 'google', 'bing', 'yahoo', 'baidu'], # duckduckgo not supported
     'search_type': 'image',
     'scrape_method': 'selenium',
     'do_caching': True,
@@ -24,9 +24,9 @@ except GoogleSearchError as e:
 
 image_urls = []
 
-for serp in search.serps:
+    for serp in search.execute("SELECT * from Link").fetchall():
     image_urls.extend(
-        [link.link for link in serp.links]
+        serp[3]
     )
 
 print('[i] Going to scrape {num} images and saving them in "{dir}"'.format(
@@ -71,7 +71,7 @@ except FileExistsError:
 # fire up 100 threads to get the images
 num_threads = 100
 
-threads = [FetchResource('images/', []) for i in range(num_threads)]
+threads = [FetchResource(target_directory + '/', []) for i in range(num_threads)]
 
 while image_urls:
     for t in threads:
